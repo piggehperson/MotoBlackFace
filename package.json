@@ -1,0 +1,27 @@
+{
+  "author": "lavendork",
+  "dependencies": {},
+  "keywords": [],
+  "name": "moto-black",
+  "pebble": {
+      "displayName": "Moto Black",
+      "enableMultiJS": true,
+      "messageKeys": [],
+      "projectType": "rocky",
+      "resources": {
+          "media": []
+      },
+      "sdkVersion": "3",
+      "targetPlatforms": [
+          "basalt",
+          "chalk",
+          "diorite",
+          "emery"
+      ],
+      "uuid": "4b287548-f29d-4c27-821c-c320ea7175dd",
+      "watchapp": {
+          "watchface": true
+      }
+  },
+  "version": "1.1"
+}
