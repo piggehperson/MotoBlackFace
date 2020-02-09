@@ -1,10 +1,12 @@
 var rocky = require('rocky');
 
 // Define the colors to be used in the watch face
-var colorBackground = "black";
-var colorWatchHands = "white";
-var colorSecondHand = "red"; // Uses colorWatchHands on B&W displays
-var colorMarkers = "lightgray"; // Controls hour/minute markers and pebble logo
+var theme = {
+  background: "black",
+  watchHands: "white",
+  secondHand: "red", // Uses colorWatchHands on B&W displays
+  markers: "lightgray" // Controls hour/minute markers and pebble logo
+}
 
 // Coords for the 5-minute markers
 var markersRect = [
@@ -80,11 +82,11 @@ function drawMarkers(ctx) {
       drawLine(ctx, 
                markersRound[i].x1, markersRound[i].y1,
                markersRound[i].x2, markersRound[i].y2,
-               1, colorMarkers
+               1, theme.markers
       );
     }
     // Draw hour markers
-    ctx.fillStyle = colorMarkers;
+    ctx.fillStyle = theme.markers;
     ctx.fillRect(87, 0, 2, 24);
     ctx.fillRect(92, 0, 2, 24);
     ctx.fillRect(89, 156, 2, 24);
@@ -97,11 +99,11 @@ function drawMarkers(ctx) {
       drawLine(ctx, 
                markersRect[n].x1, adjustHeight(ctx, markersRect[n].y1),
                markersRect[n].x2, adjustHeight(ctx, markersRect[n].y2),
-               1, colorMarkers
+               1, theme.markers
       );
     }
     // Draw hour markers
-    ctx.fillStyle = colorMarkers;
+    ctx.fillStyle = theme.markers;
     ctx.fillRect(69, 0, 2, 24);
     ctx.fillRect(74, 0, 2, 24);
     ctx.fillRect(71, adjustHeight(ctx, 144), 2, 24);
@@ -115,7 +117,7 @@ rocky.on('draw', function(event) {
   var d = new Date();
 
   // Clear the screen
-  ctx.fillStyle = colorBackground;
+  ctx.fillStyle = theme.background;
   ctx.fillRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
 
   // Determine the width and height of the display
@@ -128,7 +130,7 @@ rocky.on('draw', function(event) {
     // Watchface unobstructed, show logo
     // Set text style
     ctx.textAlign = 'center';
-    ctx.fillStyle = colorMarkers;
+    ctx.fillStyle = theme.markers;
     
     // Draw the "Pebble" logo in the top middle
     ctx.fillText("pebble", w / 2, 37, w);
@@ -154,7 +156,7 @@ rocky.on('draw', function(event) {
   var minuteAngle = fractionToRadian(minuteFraction);
   
   // Draw the minute hand
-  drawHand(ctx, cx, cy, minuteAngle, maxLength, 6, colorWatchHands);
+  drawHand(ctx, cx, cy, minuteAngle, maxLength, 6, theme.watchHands);
 
   // Calculate the hour hand angle
   var hourFraction = (d.getHours() % 12 + minuteFraction) / 12;
@@ -162,25 +164,25 @@ rocky.on('draw', function(event) {
 
   // Draw a shadow for the hour hand, so it 
   // never blends in with the minute hand
-  drawHand(ctx, cx, cy, hourAngle, maxLength * 0.6, 7, colorBackground);
+  drawHand(ctx, cx, cy, hourAngle, maxLength * 0.6, 7, theme.background);
 
   // Draw the hour hand
-  drawHand(ctx, cx, cy, hourAngle, maxLength * 0.6, 6, colorWatchHands);
+  drawHand(ctx, cx, cy, hourAngle, maxLength * 0.6, 6, theme.watchHands);
 
   // Draw the second hand
   if (rocky.watchInfo.platform == "diorite") {
     //Draw the second hand in white
-    drawHand(ctx, cx, cy, secondAngle, h, 2, colorWatchHands);
+    drawHand(ctx, cx, cy, secondAngle, h, 2, theme.watchHands);
   } else {
     // Draw it with the usual red, and make it a 
     // bit thicker to make up for reduced contrast
-    drawHand(ctx, cx, cy, secondAngle, h, 2, colorSecondHand);
+    drawHand(ctx, cx, cy, secondAngle, h, 2, theme.secondHand);
   }
   
   // Draw the dot in the center of the face
-  ctx.fillStyle = colorBackground;
+  ctx.fillStyle = theme.background;
   ctx.rockyFillRadial(cx, cy, 0, 7, 0, 2 * Math.PI);
-  ctx.fillStyle = colorWatchHands;
+  ctx.fillStyle = theme.watchHands;
   ctx.rockyFillRadial(cx, cy, 0, 3, 0, 2 * Math.PI);
 });
 
