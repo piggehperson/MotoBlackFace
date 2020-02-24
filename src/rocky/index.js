@@ -19,7 +19,22 @@ var themeMonochrome = { // For watches with black/white screens
   colorMarkers: "lightgray"
 }
 
+var isThemeSet = 0; // Flag for whether or not to set theme on this draw
 
+function setTheme() {
+  // I'd rather not hardcode this against the devoce model,
+  // but it's enough for the ~3 watches that support Rocky.JS
+  if (rocky.watchInfo.platform == "diorite") {
+    // Watch is a Pebble 2, with a monochrome screen
+    theme = themeMonochrome;
+    console.log("use bw theme");
+  } else {
+    // Watch isn't a Pebble 2, and probably has a
+    // color screen
+    theme = themeColor;
+    console.log("use color theme");
+  }
+}
 
 // Coords for the 5-minute markers
 var markersRect = [
@@ -109,7 +124,7 @@ function drawMarkers(ctx) {
   } else {
     // Device is probably not round
     // Draw minute markers
-    for (var n = 0; n < markersRect.length; n++) {
+    for (var i = 0; i < markersRect.length; i++) {
       drawLine(ctx, 
                markersRect[i].x1, markersRect[i].y1, // start
                markersRect[i].x2, markersRect[i].y2, // end
@@ -128,6 +143,12 @@ function drawMarkers(ctx) {
 }
 
 rocky.on('draw', function(event) {
+  if (!isThemeSet) {
+    // This is the first draw, set up the theme
+    setTheme();
+    isThemeSet = 1;
+  }
+  
   var ctx = event.context;
   var d = new Date();
 
@@ -165,8 +186,7 @@ rocky.on('draw', function(event) {
   var minuteAngle = fractionToRadian(minuteFraction);
   
   // Draw the minute hand
-  drawHand(ctx, cx, cy, minuteAngle, maxLength, 6, theme.colorMinuteHand
-  );
+  drawHand(ctx, cx, cy, minuteAngle, maxLength, 6, theme.colorMinuteHand);
 
   // Calculate the hour hand angle
   var hourFraction = (d.getHours() % 12 + minuteFraction) / 12;
@@ -177,8 +197,7 @@ rocky.on('draw', function(event) {
   drawHand(ctx, cx, cy, hourAngle, maxLength * 0.6, 7, theme.colorBackground);
 
   // Draw the hour hand
-  drawHand(ctx, cx, cy, hourAngle, maxLength * 0.6, 6, theme.colorHourHand;
-  );
+  drawHand(ctx, cx, cy, hourAngle, maxLength * 0.6, 6, theme.colorHourHand);
 
   // Calculate the second hand angle
   var secondFraction = (d.getSeconds()) / 60;
@@ -198,16 +217,3 @@ rocky.on('secondchange', function(event) {
   // Request the screen to be redrawn on next pass
   rocky.requestDraw();
 });
-
-rocky.on('daychange', function(event) {
-  // I'd rather not hardcode this against the devoce model,
-  // but it's enough for the ~3 watches that support Rocky.JS
-  if (rocky.watchInfo.platform == "diorite") {
-    // Watch is a Pebble 2, with a monochrome screen
-    theme = themeMonochrome;
-  } else {
-    // Watch isn't a Pebble 2, and probably has a
-    // color screen
-    theme = themeColor;
-  }
-}
